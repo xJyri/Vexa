@@ -11,4 +11,5 @@ Pidä tämä lista ajan tasalla. Uudessa chatissa: "tarkista TODO.md ja korjaa".
 - [ ] Tallennetut asennot / sekvenssit katoavat sivun päivityksessä → localStorage tai ESP32-tallennus
 
 ## Ideat
+- [ ] Ohjaus GitHub Pagesista: vaatii wss:// (ESP32 TLS) tai MQTT-brokerin (HiveMQ) välityksen
 - [ ] Käänteiskinematiikka (FABRIK selaimessa)

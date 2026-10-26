@@ -41,20 +41,40 @@ Käynnistyksessä nykyinen asento = 0° → aseta käsi nolla-asentoon ennen vir
 ## Ohjelmisto
 
 ```
+web/                        ← käyttöliittymän ainoa lähde (muokkaa tätä)
+├── index.html
+├── styles.css
+└── script.js
+tools/build_headers.py      web/ → firmware/…/*.h
 firmware/vexa_robot_ino/
-├── vexa_robot_ino.ino     ESP32-firmware (WiFi, mDNS, WebSocket :81, HTTP :80)
-├── index.h                UI: HTML  (PROGMEM)
-├── styles.h               UI: CSS   (PROGMEM)
-├── script.h               UI: JS    (PROGMEM)
-└── secrets.example.h      mallitiedosto WiFi-tunnuksille
+├── vexa_robot_ino.ino      ESP32-firmware (WiFi, mDNS, WebSocket :81, HTTP :80)
+├── index.h / styles.h / script.h   GENEROITU web/-kansiosta — älä muokkaa käsin
+└── secrets.example.h       mallitiedosto WiFi-tunnuksille
 ```
 
-### Käyttöönotto
+### Käyttöliittymän kehitys ja simulaatio
+
+Muokkaa vain `web/`-tiedostoja. Simulaatio toimii suoraan selaimessa ilman rautaa:
+
+- **GitHub Pages:** `…/Vexa/web/` — vain simulaatio (https-sivu ei saa avata `ws://`-yhteyttä, joten laiteyhteys on UI:ssa pois käytöstä).
+- **Paikallisesti:** avaa `web/index.html` selaimessa — simulaatio.
+
+Kun UI on valmis ESP32:lle:
+
+```bash
+python3 tools/build_headers.py          # päivittää firmware/…/*.h
+python3 tools/build_headers.py --check  # tarkistaa ovatko ne ajan tasalla
+```
+
+### Robotin ajo
 
 1. Kopioi `secrets.example.h` → `secrets.h` ja täytä WiFi-tunnukset (`secrets.h` ei mene GitHubiin).
 2. Kirjastot: **FastAccelStepper**, **WebSockets** (Links2004), **ArduinoJson** (v6).
-3. Lataa ESP32:lle, avaa `http://vexa.local` (tai sarjamonitorin IP).
-4. TERMINAL-välilehdeltä: Mode = WebSocket → CONNECT.
+3. Aja `tools/build_headers.py`, lataa firmware ESP32:lle.
+4. Ohjaus kahdella tavalla (molemmissa `ws://`-yhteys sallitaan, koska sivu ei ole https):
+   - avaa `http://vexa.local` (ESP32 tarjoaa UI:n), tai
+   - lataa repo koneelle ja avaa `web/index.html` tiedostona.
+5. TERMINAL-välilehti: Mode = WebSocket → CONNECT (osoite `ws://vexa.local:81`).
 
 ### UI-ominaisuudet
 

@@ -977,7 +977,9 @@ function init(){
   const defaultUrl = (location.protocol === 'http:' && location.hostname)
     ? 'ws://' + location.hostname + ':81' : 'ws://vexa.local:81';
   const savedUrl  = localStorage.getItem('vexa-ws-url')  || defaultUrl;
-  const savedMode = localStorage.getItem('vexa-conn-mode')|| 'simulation';
+  // https-sivulta (esim. GitHub Pages) selain estää ws://-yhteydet → vain simulaatio
+  const httpsOnly = location.protocol === 'https:';
+  const savedMode = httpsOnly ? 'simulation' : (localStorage.getItem('vexa-conn-mode')|| 'simulation');
   document.getElementById('connUrl').value = savedUrl;
 
   document.getElementById('connUrlRow').style.display='none';
@@ -985,6 +987,17 @@ function init(){
   setConnLiveDot(false);
   setHint('Simulation mode — no hardware needed','');
   termLog('VEXA v0.4.0 ready','info');
+
+  if (httpsOnly) {
+    const modeEl = document.getElementById('connMode');
+    if (modeEl) {
+      modeEl.querySelectorAll('option').forEach(o => { if (o.value !== 'simulation') o.disabled = true; });
+      modeEl.value = 'simulation';
+    }
+    document.getElementById('btnApplyConn').disabled = true;
+    setHint('Simulation only — browsers block ws:// from https pages. To drive the robot, open vexa.local or run web/index.html locally.', 'error');
+    termLog('Hardware control disabled on https (simulation only)', 'info');
+  }
 
   if (savedMode === 'websocket') {
     const modeEl = document.getElementById('connMode');
