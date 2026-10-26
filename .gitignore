@@ -1,0 +1,13 @@
+# WiFi-tunnukset — ei koskaan GitHubiin
+secrets.h
+
+# Arduino / PlatformIO build
+build/
+.pio/
+*.bin
+*.elf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
